@@ -1,20 +1,16 @@
 public class QuantityMeasurementApp {
 
-    enum LengthUnit {
-        FEET(1.0),
-        INCH(1.0 / 12.0),
-        YARD(3.0),
-        CENTIMETER(0.0328084);
+    public static void main(String[] args) {
 
-        private final double toFeetFactor;
+        // ================= LENGTH =================
+        QuantityLength l1 = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength l2 = new QuantityLength(12.0, LengthUnit.INCH);
 
-        LengthUnit(double toFeetFactor) {
-            this.toFeetFactor = toFeetFactor;
-        }
+        System.out.println("Length Equality:");
+        System.out.println(l1.equals(l2)); // true
 
-        public double toFeet(double value) {
-            return value * toFeetFactor;
-        }
+        System.out.println("Length Convert:");
+        System.out.println(l1.convertTo(LengthUnit.INCH)); // 12
 
         public double fromFeet(double feetValue) {
             return feetValue / toFeetFactor;
@@ -80,28 +76,25 @@ public class QuantityMeasurementApp {
             double sumFeet = q1.toFeet() + q2.toFeet();
             double result = targetUnit.fromFeet(sumFeet);
 
-            return new QuantityLength(result, targetUnit);
-        }
 
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
 
-            QuantityLength other = (QuantityLength) obj;
+        System.out.println("\nWeight Equality:");
+        System.out.println(w1.equals(w2)); // true
 
-            return Math.abs(this.toFeet() - other.toFeet()) < EPSILON;
-        }
+        System.out.println("Weight Convert:");
+        System.out.println(w1.convertTo(WeightUnit.GRAM)); // 1000
 
-        @Override
-        public int hashCode() {
-            return Double.hashCode(toFeet());
-        }
+        System.out.println("Weight Add:");
+        QuantityWeight w3 = QuantityWeight.add(w1, w2);
+        System.out.println(w3); // 2 kg
 
-        @Override
-        public String toString() {
-            return "Quantity(" + value + ", " + unit + ")";
-        }
+        System.out.println("Weight Add with target:");
+        QuantityWeight w4 = QuantityWeight.add(w1, w2, WeightUnit.POUND);
+        System.out.println(w4);
     }
 
     // ================= MAIN METHOD =================
