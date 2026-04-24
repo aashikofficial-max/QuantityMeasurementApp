@@ -37,7 +37,6 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
-        // ✅ GETTERS (FIX for your error)
         public double getValue() {
             return value;
         }
@@ -46,7 +45,6 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        // ================= CONVERSION =================
         private double toFeet() {
             return unit.toFeet(value);
         }
@@ -66,7 +64,6 @@ public class QuantityMeasurementApp {
             return new QuantityLength(convert(value, unit, target), target);
         }
 
-        // ================= ADDITION (UC6) =================
         public QuantityLength add(QuantityLength other) {
             return add(this, other, this.unit);
         }
@@ -86,7 +83,6 @@ public class QuantityMeasurementApp {
             return new QuantityLength(result, targetUnit);
         }
 
-        // ================= EQUALITY =================
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -106,5 +102,31 @@ public class QuantityMeasurementApp {
         public String toString() {
             return "Quantity(" + value + ", " + unit + ")";
         }
+    }
+
+    // ================= MAIN METHOD =================
+    public static void main(String[] args) {
+
+        QuantityLength length1 = new QuantityLength(1, LengthUnit.FEET);
+        QuantityLength length2 = new QuantityLength(12, LengthUnit.INCH);
+
+        // Equality check
+        System.out.println("1 foot == 12 inches ? " + length1.equals(length2));
+
+        // Conversion
+        QuantityLength inYards = length1.convertTo(LengthUnit.YARD);
+        System.out.println("1 foot in yards: " + inYards);
+
+        // Addition (default unit = first operand unit)
+        QuantityLength sum1 = length1.add(length2);
+        System.out.println("1 foot + 12 inches = " + sum1);
+
+        // Addition with target unit
+        QuantityLength sum2 = QuantityLength.add(length1, length2, LengthUnit.INCH);
+        System.out.println("1 foot + 12 inches in inches = " + sum2);
+
+        // Another example
+        QuantityLength cm = new QuantityLength(30, LengthUnit.CENTIMETER);
+        System.out.println("30 cm in feet: " + cm.convertTo(LengthUnit.FEET));
     }
 }
