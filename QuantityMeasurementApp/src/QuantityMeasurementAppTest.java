@@ -3,67 +3,83 @@ import static org.junit.Assert.*;
 
 public class QuantityMeasurementAppTest {
 
-    private static final double EPSILON = 1e-6;
+    private static final double DELTA = 0.000001;
 
+    // =========================
+    // EQUALITY
+    // =========================
     @Test
-    public void testAddition_ExplicitTargetUnit_Feet() {
-        QuantityMeasurementApp.QuantityLength result =
-                QuantityMeasurementApp.QuantityLength.add(
-                        new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET),
-                        new QuantityMeasurementApp.QuantityLength(12.0 / 12, QuantityMeasurementApp.LengthUnit.FEET),
-                        QuantityMeasurementApp.LengthUnit.FEET
-                );
+    public void testEquality_Feet_Inch() {
+        QuantityLength feet = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength inch = new QuantityLength(12.0, LengthUnit.INCH);
 
-        assertEquals(2.0, result.value(), EPSILON);
+        assertTrue(feet.equals(inch));
+    }
+
+    // =========================
+    // CONVERSION
+    // =========================
+    @Test
+    public void testConvert_Feet_To_Inch() {
+        QuantityLength feet = new QuantityLength(1.0, LengthUnit.FEET);
+
+        assertEquals(12.0, feet.convertTo(LengthUnit.INCH), DELTA);
     }
 
     @Test
-    public void testAddition_ExplicitTargetUnit_Inches() {
-        QuantityMeasurementApp.QuantityLength result =
-                QuantityMeasurementApp.QuantityLength.add(
-                        new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET),
-                        new QuantityMeasurementApp.QuantityLength(12.0, QuantityMeasurementApp.LengthUnit.INCH),
-                        QuantityMeasurementApp.LengthUnit.INCH
-                );
+    public void testConvert_Yard_To_Feet() {
+        QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARD);
 
-        assertEquals(24.0, result.value(), EPSILON);
+        assertEquals(3.0, yard.convertTo(LengthUnit.FEET), DELTA);
     }
 
     @Test
-    public void testAddition_ExplicitTargetUnit_Yards() {
-        QuantityMeasurementApp.QuantityLength result =
-                QuantityMeasurementApp.QuantityLength.add(
-                        new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET),
-                        new QuantityMeasurementApp.QuantityLength(12.0, QuantityMeasurementApp.LengthUnit.INCH),
-                        QuantityMeasurementApp.LengthUnit.YARD
-                );
+    public void testConvert_CM_To_Inch() {
+        QuantityLength cm = new QuantityLength(2.54, LengthUnit.CENTIMETER);
 
-        assertEquals(0.666666, result.value(), EPSILON);
+        assertEquals(1.0, cm.convertTo(LengthUnit.INCH), DELTA);
+    }
+
+    // =========================
+    // ADDITION
+    // =========================
+    @Test
+    public void testAddition_Feet_Inch_FeetResult() {
+
+        QuantityLength feet = new QuantityLength(1.0, LengthUnit.FEET);
+        QuantityLength inch = new QuantityLength(12.0, LengthUnit.INCH);
+
+        QuantityLength result =
+                QuantityLength.add(feet, inch, LengthUnit.FEET);
+
+        assertEquals(2.0, result.getValue(), DELTA);
+        assertEquals(LengthUnit.FEET, result.getUnit());
+    }
+
+    @Test
+    public void testAddition_Yard_Feet_YardResult() {
+
+        QuantityLength yard = new QuantityLength(1.0, LengthUnit.YARD);
+        QuantityLength feet = new QuantityLength(3.0, LengthUnit.FEET);
+
+        QuantityLength result =
+                QuantityLength.add(yard, feet, LengthUnit.YARD);
+
+        assertEquals(2.0, result.getValue(), DELTA);
+    }
+
+    // =========================
+    // NULL CHECK
+    // =========================
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullUnit() {
+        new QuantityLength(1.0, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAddition_NullTargetUnit() {
-        QuantityMeasurementApp.QuantityLength.add(
-                new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET),
-                new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET),
-                null
-        );
-    }
+    public void testNullAddition() {
+        QuantityLength feet = new QuantityLength(1.0, LengthUnit.FEET);
 
-    @Test
-    public void testAddition_Commutativity() {
-        QuantityMeasurementApp.QuantityLength a =
-                new QuantityMeasurementApp.QuantityLength(1.0, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.QuantityLength b =
-                new QuantityMeasurementApp.QuantityLength(12.0, QuantityMeasurementApp.LengthUnit.INCH);
-
-        QuantityMeasurementApp.QuantityLength r1 =
-                QuantityMeasurementApp.QuantityLength.add(a, b, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.QuantityLength r2 =
-                QuantityMeasurementApp.QuantityLength.add(b, a, QuantityMeasurementApp.LengthUnit.FEET);
-
-        assertEquals(r1.value(), r2.value(), EPSILON);
+        QuantityLength.add(feet, null, LengthUnit.FEET);
     }
 }
